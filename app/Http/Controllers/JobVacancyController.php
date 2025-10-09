@@ -46,7 +46,10 @@ class JobVacancyController extends Controller
             $fileName = 'resume_' . time() . '.' . $extension;
 
             // Store in Laravel cloud
-            $path = $file->storeAs('resumes', $fileName, 'cloud');
+            $path = $file->storeAs('resumes', $fileName, [
+                'disk' => 'cloud',
+                'visibility' => 'public'
+            ]);
 
 
             $fileUrl = config('filesystems.disks.cloud.url') . '/' . $path;
@@ -63,9 +66,9 @@ class JobVacancyController extends Controller
                     'email' => auth()->user()->email
                 ]),
                 'summary' => $extractedInfo['summary'],
-                'skills' => $extractedInfo['skills'],
-                'experience' => $extractedInfo['experience'],
-                'education' => $extractedInfo['education']
+                'skills' => json_encode($extractedInfo['skills']),
+                'experience' => json_encode($extractedInfo['experience']),
+                'education' => json_encode($extractedInfo['education'])
             ]);
 
             $resumeId = $resume->id;
